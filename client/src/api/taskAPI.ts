@@ -4,12 +4,12 @@ import type { Task } from "../types/Task";
 const API_URL = "http://localhost:3000/api/tasks";
 
 export const getTasks = async (): Promise<Task[]> => {
-  const response = await axios.get(API_URL);
+  const response = await axios.get<Task[]>(API_URL);
   return response.data;
 };
 
 export const createTask = async (title: string): Promise<Task> => {
-  const response = await axios.post(API_URL, { title });
+  const response = await axios.post<Task>(API_URL, { title });
   return response.data;
 };
 
@@ -17,7 +17,7 @@ export const updateTask = async (
   id: string,
   data: Partial<Task>
 ): Promise<Task> => {
-  const response = await axios.put(`${API_URL}/${id}`, data);
+  const response = await axios.put<Task>(`${API_URL}/${id}`, data);
   return response.data;
 };
 
