@@ -3,6 +3,8 @@ import "./App.css";
 import { TaskList } from "./components/taskList";
 import { UserList } from "./components/userList";
 import { TaskAssignment } from "./components/taskAssignment";
+import { Home } from "./components/home";
+import { MemberList } from "./components/memberList";
 
 function App() {
   return (
@@ -18,16 +20,22 @@ function App() {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Link
+                    to="/"
+                    className="py-4 px-2 hover:text-blue-500 transition duration-300"
+                  >
+                    Home
+                  </Link>
+                  <Link
                     to="/tasks"
                     className="py-4 px-2 hover:text-blue-500 transition duration-300"
                   >
                     Tasks
                   </Link>
                   <Link
-                    to="/users"
+                    to="/members"
                     className="py-4 px-2 hover:text-blue-500 transition duration-300"
                   >
-                    Users
+                    Members
                   </Link>
                   <Link
                     to="/assign"
@@ -44,8 +52,9 @@ function App() {
         {/* Main Content */}
         <div className="max-w-6xl mx-auto">
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/tasks" element={<TaskList />} />
-            <Route path="/users" element={<UserList />} />
+            <Route path="/members" element={<MemberList />} />
             <Route path="/assign" element={<TaskAssignment />} />
           </Routes>
         </div>
