@@ -3,7 +3,7 @@ export interface Task {
   title: string;
   description?: string;
   completed: boolean;
-  userId: string; // reference to assigned user
+  userId: string;
   priority: "low" | "medium" | "high";
   status: "todo" | "in-progress" | "done";
   dueDate: Date;

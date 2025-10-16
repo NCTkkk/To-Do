@@ -1,4 +1,6 @@
 import type { Member } from "../types/Member";
+import { useAuth } from "../context/AuthContext";
+import type { AuthUser } from "../context/AuthContext";
 
 interface MemberCardProps {
   member: Member;
@@ -8,6 +10,7 @@ interface MemberCardProps {
   onUpdate: (id: string, memberData: Partial<Member>) => void;
   onCancelEdit: () => void;
   setEditingMember: React.Dispatch<React.SetStateAction<Member | null>>;
+  curentUser?: AuthUser | null;
 }
 
 export const MemberCard = ({
@@ -19,6 +22,11 @@ export const MemberCard = ({
   onCancelEdit,
   setEditingMember,
 }: MemberCardProps) => {
+  const { user } = useAuth();
+
+  const canEdit = user?.role === "member";
+  const canDelete = user?.role === "member";
+
   return (
     <div key={member.id} className="border rounded-lg p-4 bg-white shadow-sm">
       {editingMember?.id === member.id ? (
@@ -72,7 +80,7 @@ export const MemberCard = ({
               <p className="text-gray-600">{member.email}</p>
             </div>
 
-            <div className="flex gap-2">
+            {/* <div className="flex gap-2">
               <button
                 onClick={() => onEdit(member)}
                 className="text-blue-500 hover:text-blue-700"
@@ -87,6 +95,27 @@ export const MemberCard = ({
               >
                 <i className="fas fa-trash"></i>
               </button>
+            </div> */}
+
+            <div className="flex gap-2">
+              {canEdit && (
+                <button
+                  onClick={() => onEdit(member)}
+                  className="text-blue-500 hover:text-blue-700"
+                  title="Edit Member"
+                >
+                  <i className="fas fa-edit"></i>
+                </button>
+              )}
+              {canDelete && (
+                <button
+                  onClick={() => onDelete(member.id)}
+                  className="text-red-500 hover:text-red-700"
+                  title="Delete Member"
+                >
+                  <i className="fas fa-trash"></i>
+                </button>
+              )}
             </div>
           </div>
           <div className="border-t pt-3">

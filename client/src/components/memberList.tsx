@@ -124,6 +124,7 @@ export const MemberList = () => {
             onUpdate={handleUpdateMember}
             onCancelEdit={() => setEditingMember(null)}
             setEditingMember={setEditingMember}
+            curentUser={null}
           />
         ))}
       </div>

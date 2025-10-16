@@ -1,10 +1,8 @@
-import type { Task } from "./Task";
-
 export interface User {
   id: string;
   name: string;
   password: string;
-  tasks?: Task[];
+  tasks?: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }
