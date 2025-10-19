@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import type { Member } from "../types/Member";
+import type { Member } from "../../types/Member";
 import {
   getMembers,
   createMember,
   updateMember,
   deleteMember,
-} from "../api/memberAPI";
-import { MemberCard } from "./propMemberList";
+} from "../../api/memberAPI";
+import { MemberCard } from "./MemberCard";
 
 export const MemberList = () => {
   const [members, setMembers] = useState<Member[]>([]);
@@ -124,7 +124,6 @@ export const MemberList = () => {
             onUpdate={handleUpdateMember}
             onCancelEdit={() => setEditingMember(null)}
             setEditingMember={setEditingMember}
-            curentUser={null}
           />
         ))}
       </div>

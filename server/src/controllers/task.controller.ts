@@ -25,11 +25,22 @@ export class TaskController {
 
   async create(req: Request, res: Response) {
     try {
-      const { title } = req.body;
-      if (!title) {
-        return res.status(400).json({ message: "Title is required" });
+      const { title, userId } = req.body;
+      if (!title || !userId) {
+        return res
+          .status(400)
+          .json({ message: "Title and userId are required" });
       }
-      const task = await taskService.create(title);
+
+      const task = await taskService.create({
+        title,
+        userId,
+        completed: false,
+        priority: "medium",
+        status: "todo",
+        dueDate: new Date(),
+      });
+
       res.status(201).json(task);
     } catch (error) {
       res.status(500).json({ message: "Error creating task", error });

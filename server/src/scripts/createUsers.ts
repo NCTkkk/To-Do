@@ -1,3 +1,4 @@
+// npx ts-node src/scripts/createUsers.ts
 import sequelize from "../configs/database";
 import User from "../models/user";
 

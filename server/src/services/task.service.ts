@@ -9,8 +9,15 @@ export class TaskService {
     return await Task.findByPk(id);
   }
 
-  async create(title: string) {
-    return await Task.create({ title });
+  async create(data: {
+    title: string;
+    userId: string;
+    completed: boolean;
+    priority: "low" | "medium" | "high";
+    status: "todo" | "in-progress" | "done";
+    dueDate: Date;
+  }) {
+    return await Task.create(data);
   }
 
   async update(id: string, data: { title?: string; completed?: boolean }) {

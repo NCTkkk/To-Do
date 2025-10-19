@@ -8,8 +8,8 @@ export const getTasks = async (): Promise<Task[]> => {
   return response.data;
 };
 
-export const createTask = async (title: string): Promise<Task> => {
-  const response = await axios.post<Task>(API_URL, { title });
+export const createTask = async (task: Task): Promise<Task> => {
+  const response = await axios.post<Task>(API_URL, { task });
   return response.data;
 };
 
@@ -23,4 +23,9 @@ export const updateTask = async (
 
 export const deleteTask = async (id: string): Promise<void> => {
   await axios.delete(`${API_URL}/${id}`);
+};
+
+export const getTasksByMember = async (memberId: string) => {
+  const res = await axios.get<Task[]>(`${API_URL}?userId=${memberId}`);
+  return res.data;
 };

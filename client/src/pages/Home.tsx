@@ -1,6 +1,6 @@
 export const Home = () => {
   return (
-    <div className="mt-10">
+    <div className="mt-10  max-w-6xl mx-auto px-4">
       <p className="text-2xl font-semibold text-blue-600 ">
         Welcome to the ToDo App ...!
       </p>
@@ -40,7 +40,7 @@ export const Home = () => {
         </p>
       </div>
 
-      <div className="fixed bottom-0 left-0 w-full border-t pt-4">
+      <div className="fixed bottom-0 left-0 w-full border-t pt-4 flex flex-col items-center justify-center text-center">
         <div>
           <p className="mt-1 text-sm text-gray-500">
             © 2024 ToDo App. All rights reserved.
