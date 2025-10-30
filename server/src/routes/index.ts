@@ -1,14 +1,15 @@
 import { Router } from "express";
 import taskRoutes from "./task";
 import userRoutes from "./user";
-import memberRoutes from "./member";
-import adminRoutes from "./admin";
+import { authMiddleware } from "../middlewares/auth.middlewares";
+import authRoutes from "./auth";
+import { authorize } from "../middlewares/role.middleware";
 
 const router = Router();
 
-router.use("/tasks", taskRoutes);
-router.use("/users", userRoutes);
-router.use("/members", memberRoutes);
-router.use("/admins", adminRoutes);
+router.use("/tasks", authMiddleware, taskRoutes);
+router.use("/users", authorize("admin"), userRoutes);
+
+router.use("/auth", authRoutes);
 
 export default router;

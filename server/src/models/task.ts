@@ -14,6 +14,7 @@ interface TaskAttributes {
   dueDate: Date;
   createdAt?: Date;
   updatedAt?: Date;
+  assignedTo?: string | null;
 }
 
 interface TaskCreationAttributes extends Optional<TaskAttributes, "id"> {}
@@ -32,6 +33,7 @@ class Task
   public dueDate!: Date;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public assignedTo?: string | null;
 }
 
 Task.init(
@@ -57,6 +59,11 @@ Task.init(
       type: DataTypes.UUID,
       allowNull: false,
     },
+    assignedTo: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: { model: "users", key: "id" },
+    },
     priority: {
       type: DataTypes.ENUM("low", "medium", "high"),
       defaultValue: "medium",
@@ -77,6 +84,9 @@ Task.init(
 );
 
 Task.belongsTo(User, { foreignKey: "userId", as: "user" });
+Task.belongsTo(User, { foreignKey: "assignedTo", as: "assignee" });
+
 User.hasMany(Task, { foreignKey: "userId", as: "tasks" });
+User.hasMany(Task, { foreignKey: "assignedTo", as: "assignedTasks" });
 
 export default Task;

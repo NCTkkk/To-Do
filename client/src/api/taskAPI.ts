@@ -4,7 +4,10 @@ import type { Task } from "../types/Task";
 const API_URL = "http://localhost:3000/api/tasks";
 
 export const getTasks = async (): Promise<Task[]> => {
-  const response = await axios.get<Task[]>(API_URL);
+  const token = localStorage.getItem("token");
+  const response = await axios.get<Task[]>(API_URL, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return response.data;
 };
 

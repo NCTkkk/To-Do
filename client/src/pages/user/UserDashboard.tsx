@@ -71,8 +71,6 @@ export const UserDashboard = () => {
         const userTasks = data.filter(
           (t) => String(t.userId) === String(user.id)
         );
-        console.log("Tasks từ API:", data);
-        console.log("userTák: ", userTasks);
         setTasks(userTasks);
       } catch (err) {
         console.error("Lỗi tải tasks:", err);

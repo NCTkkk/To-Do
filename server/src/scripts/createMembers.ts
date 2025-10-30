@@ -1,3 +1,4 @@
+// npx ts-node src/scripts/createMembers.ts
 import Member from "../models/member";
 import sequelize from "../configs/database";
 

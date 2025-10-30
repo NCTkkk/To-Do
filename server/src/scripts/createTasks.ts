@@ -14,31 +14,24 @@ const createSampleTasks = async () => {
     // Create tasks
     const tasks = await Task.bulkCreate([
       {
-        title: "Học Node.js",
-        description: "Làm mini project API",
+        title: "ngủ",
+        description: "",
         completed: false,
         userId: "05cbf6ae-829b-4421-8cf9-9caa4a4a800a",
         priority: "high",
         status: "in-progress",
         dueDate: new Date("2026-10-30"),
+        assignedTo: "591686ed-de0d-4abd-a846-42ca6406de01",
       },
       {
-        title: "Học Express",
-        description: "Tạo RESTful routes",
+        title: "ăn",
+        description: "",
         completed: false,
         userId: "05cbf6ae-829b-4421-8cf9-9caa4a4a800a",
         priority: "medium",
         status: "todo",
         dueDate: new Date("2026-11-05"),
-      },
-      {
-        title: "Học TypeScript",
-        description: "Dùng type cho model và controller",
-        completed: false,
-        userId: "05cbf6ae-829b-4421-8cf9-9caa4a4a800a",
-        priority: "low",
-        status: "todo",
-        dueDate: new Date("2026-11-10"),
+        assignedTo: "591686ed-de0d-4abd-a846-42ca6406de01",
       },
     ]);
 

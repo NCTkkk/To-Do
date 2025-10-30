@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import models from "./models";
 import routes from "./routes";
@@ -6,7 +9,7 @@ import cors from "cors";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // Base route
 app.get("/", (req, res) => {
@@ -20,7 +23,7 @@ models.sequelize
   .authenticate()
   .then(() => {
     console.log("Database connection has been established successfully.");
-    return models.sequelize.sync({ alter: true }); // ensure table is created/updated
+    return models.sequelize.sync(); // ensure table is created/updated
   })
   .then(() => {
     app.listen(3000, () =>

@@ -13,10 +13,18 @@ export class UserController {
 
   async findById(req: Request, res: Response) {
     try {
-      const user = await UserService.findById(req.params.id);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
+      const userId = (req as any).userId;
+      const role = (req as any).userRole;
+      const targetId = req.params.id;
+
+      // user/member chỉ xem được chính mình
+      if (role !== "admin" && userId !== targetId) {
+        return res.status(403).json({ message: "Không thể xem người khác" });
       }
+
+      const user = await UserService.findById(targetId);
+      if (!user) return res.status(404).json({ message: "User not found" });
+
       res.json(user);
     } catch (error) {
       res.status(500).json({ message: "Error fetching user", error });
@@ -25,11 +33,14 @@ export class UserController {
 
   async create(req: Request, res: Response) {
     try {
-      const { name, password } = req.body;
+      const { name, password, role } = req.body;
       if (!name || !password) {
-        return res.status(400).json({ message: "Name and email are required" });
+        return res
+          .status(400)
+          .json({ message: "Name and password are required" });
       }
-      const user = await UserService.create({ name, password });
+
+      const user = await UserService.create({ name, password, role });
       res.status(201).json(user);
     } catch (error) {
       res.status(500).json({ message: "Error creating user", error });
@@ -38,8 +49,19 @@ export class UserController {
 
   async update(req: Request, res: Response) {
     try {
+      const userId = (req as any).userId;
+      const role = (req as any).userRole;
+      const targetId = req.params.id;
+
+      // user/member chỉ được sửa chính mình
+      if (role !== "admin" && userId !== targetId) {
+        return res
+          .status(403)
+          .json({ message: "Không thể sửa thông tin người khác" });
+      }
+
       const { name, password } = req.body;
-      const user = await UserService.update(req.params.id, { name, password });
+      const user = await UserService.update(targetId, { name, password });
       res.json(user);
     } catch (error) {
       if (error instanceof Error && error.message === "User not found") {

@@ -6,26 +6,27 @@ export class UserService {
   }
 
   async findAll() {
-    return await User.findAll();
+    return await User.findAll({
+      attributes: ["id", "name", "role", "createdAt"],
+    });
   }
 
-  async create(data: { name?: string; password?: string }) {
-    return await User.create(data);
+  async create(data: { name: string; password: string; role?: string }) {
+    return await User.create({
+      ...data,
+      role: data.role || "user",
+    });
   }
 
   async update(id: string, data: { name?: string; password?: string }) {
     const user = await User.findByPk(id);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    if (!user) throw new Error("User not found");
     return await user.update(data);
   }
 
   async delete(id: string) {
     const user = await User.findByPk(id);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    if (!user) throw new Error("User not found");
     await user.destroy();
     return true;
   }
