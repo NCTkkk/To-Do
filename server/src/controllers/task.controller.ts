@@ -24,8 +24,20 @@ export class TaskController {
 
   async findById(req: Request, res: Response) {
     try {
+      const role = (req as any).userRole;
+      const userId = (req as any).userId;
       const task = await taskService.findById(req.params.id);
       if (!task) return res.status(404).json({ message: "Task not found" });
+
+      // check quyền xem
+      if (
+        role !== "admin" &&
+        task.userId !== userId &&
+        task.assignedTo !== userId
+      ) {
+        return res.status(403).json({ message: "Không có quyền xem task này" });
+      }
+
       res.json(task);
     } catch (error) {
       res.status(500).json({ message: "Error fetching task", error });
@@ -34,17 +46,14 @@ export class TaskController {
 
   async create(req: Request, res: Response) {
     try {
-      const { title, userId, assignedTo, description, priority, dueDate } =
-        req.body;
+      const userId = (req as any).userId; // 🔹 lấy từ token, không tin client
+      const { title, assignedTo, description, priority, dueDate } = req.body;
 
-      if (!title || !userId)
-        return res
-          .status(400)
-          .json({ message: "Title and userId are required" });
+      if (!title) return res.status(400).json({ message: "Title is required" });
 
       const task = await taskService.create({
         title,
-        userId,
+        userId, // người tạo task
         assignedTo: assignedTo ?? null,
         description,
         priority,
@@ -59,8 +68,19 @@ export class TaskController {
 
   async update(req: Request, res: Response) {
     try {
-      const task = await taskService.update(req.params.id, req.body);
-      res.json(task);
+      const role = (req as any).userRole;
+      const userId = (req as any).userId;
+      const task = await taskService.findById(req.params.id);
+
+      if (!task) return res.status(404).json({ message: "Task not found" });
+
+      // 🔸 chỉ admin hoặc chính chủ mới sửa
+      if (role !== "admin" && task.userId !== userId) {
+        return res.status(403).json({ message: "Không có quyền sửa task này" });
+      }
+
+      const updated = await taskService.update(req.params.id, req.body);
+      res.json(updated);
     } catch (error) {
       if (error instanceof Error && error.message === "Task not found")
         return res.status(404).json({ message: "Task not found" });
@@ -71,6 +91,17 @@ export class TaskController {
 
   async delete(req: Request, res: Response) {
     try {
+      const role = (req as any).userRole;
+      const userId = (req as any).userId;
+      const task = await taskService.findById(req.params.id);
+
+      if (!task) return res.status(404).json({ message: "Task not found" });
+
+      // 🔸 chỉ admin hoặc chính chủ mới xóa
+      if (role !== "admin" && task.userId !== userId) {
+        return res.status(403).json({ message: "Không có quyền xóa task này" });
+      }
+
       await taskService.delete(req.params.id);
       res.status(204).send();
     } catch (error) {

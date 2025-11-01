@@ -11,8 +11,13 @@ export const getTasks = async (): Promise<Task[]> => {
   return response.data;
 };
 
-export const createTask = async (task: Task): Promise<Task> => {
-  const response = await axios.post<Task>(API_URL, { task });
+export const createTask = async (
+  data: Omit<Task, "id" | "createdAt" | "updatedAt">
+): Promise<Task> => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post<Task>(API_URL, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return response.data;
 };
 
@@ -20,15 +25,24 @@ export const updateTask = async (
   id: string,
   data: Partial<Task>
 ): Promise<Task> => {
-  const response = await axios.put<Task>(`${API_URL}/${id}`, data);
+  const token = localStorage.getItem("token");
+  const response = await axios.put<Task>(`${API_URL}/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return response.data;
 };
 
 export const deleteTask = async (id: string): Promise<void> => {
-  await axios.delete(`${API_URL}/${id}`);
+  const token = localStorage.getItem("token");
+  await axios.delete(`${API_URL}/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
 
-export const getTasksByMember = async (memberId: string) => {
-  const res = await axios.get<Task[]>(`${API_URL}?userId=${memberId}`);
-  return res.data;
+export const getTasksByMember = async (memberId: string): Promise<Task[]> => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get<Task[]>(`${API_URL}?memberId=${memberId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };

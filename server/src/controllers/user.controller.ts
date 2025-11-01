@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import UserService from "../services/user.service";
+import bcrypt from "bcrypt";
 
 export class UserController {
   async findALL(req: Request, res: Response) {
@@ -40,6 +41,7 @@ export class UserController {
           .json({ message: "Name and password are required" });
       }
 
+      const hashedPassword = await bcrypt.hash(password, 10);
       const user = await UserService.create({ name, password, role });
       res.status(201).json(user);
     } catch (error) {

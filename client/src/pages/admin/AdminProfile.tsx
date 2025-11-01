@@ -1,26 +1,26 @@
 import { useAuth } from "../../context/AuthContext";
 
 export const AdminProfile = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
-    <div className="text-center">
-      <h2 className="text-2xl font-semibold mb-4">Thông tin Admin</h2>
+    <div className="bg-white p-6 rounded shadow">
+      <h2 className="text-xl font-bold mb-4">Thông tin Admin</h2>
       {user ? (
-        <div className="space-y-3">
-          <p>
-            <strong>ID:</strong> {user.id}
-          </p>
+        <>
           <p>
             <strong>Tên:</strong> {user.name}
           </p>
           <p>
             <strong>Vai trò:</strong> {user.role}
           </p>
-          <p>
-            <strong>Email:</strong> admin@example.com
-          </p>
-        </div>
+          <button
+            onClick={logout}
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Đăng xuất
+          </button>
+        </>
       ) : (
         <p>Không có thông tin người dùng.</p>
       )}

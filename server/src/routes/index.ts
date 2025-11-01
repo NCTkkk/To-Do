@@ -8,7 +8,7 @@ import { authorize } from "../middlewares/role.middleware";
 const router = Router();
 
 router.use("/tasks", authMiddleware, taskRoutes);
-router.use("/users", authorize("admin"), userRoutes);
+router.use("/users", authMiddleware, userRoutes);
 
 router.use("/auth", authRoutes);
 

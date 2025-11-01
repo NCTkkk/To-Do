@@ -9,4 +9,5 @@ export interface Task {
   dueDate: Date;
   createdAt: Date;
   updatedAt: Date;
+  assignedTo?: string | null;
 }

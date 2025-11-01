@@ -1,49 +1,3 @@
-// import { useState } from "react";
-// import { UserTasks } from "./UserTasks";
-// import { UserProfile } from "./UserProfile";
-
-// export const UserDashboard = () => {
-//   const [activeTab, setActiveTab] = useState<"tasks" | "profile">("tasks");
-
-//   return (
-//     <div className="p-8">
-//       <h1 className="text-3xl font-bold mb-6 text-center text-green-700">
-//         User Dashboard
-//       </h1>
-
-//       {/* Tabs */}
-//       <div className="flex justify-center gap-4 mb-8">
-//         <button
-//           className={`px-4 py-2 rounded ${
-//             activeTab === "tasks"
-//               ? "bg-green-500 text-white"
-//               : "bg-gray-200 hover:bg-gray-300"
-//           }`}
-//           onClick={() => setActiveTab("tasks")}
-//         >
-//           Nhiệm vụ
-//         </button>
-//         <button
-//           className={`px-4 py-2 rounded ${
-//             activeTab === "profile"
-//               ? "bg-green-500 text-white"
-//               : "bg-gray-200 hover:bg-gray-300"
-//           }`}
-//           onClick={() => setActiveTab("profile")}
-//         >
-//           Hồ sơ cá nhân
-//         </button>
-//       </div>
-
-//       {/* Nội dung */}
-//       <div className="border rounded-lg shadow p-6 bg-white">
-//         {activeTab === "tasks" && <UserTasks />}
-//         {activeTab === "profile" && <UserProfile />}
-//       </div>
-//     </div>
-//   );
-// };
-
 import { useEffect, useState } from "react";
 import type { Task } from "../../types/Task";
 import {
@@ -81,22 +35,16 @@ export const UserDashboard = () => {
 
   const handleAddTask = async () => {
     if (!newTask.title.trim()) return alert("Nhập tiêu đề task!");
-
-    const task: Task = {
-      id: Date.now().toString(),
-      title: newTask.title,
-      description: newTask.description,
-      completed: false,
-      userId: user!.id,
-      priority: newTask.priority,
-      status: "todo",
-      dueDate: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
     try {
-      const res = await createTask(task);
+      const res = await createTask({
+        title: newTask.title,
+        description: newTask.description,
+        userId: user!.id,
+        completed: false,
+        priority: newTask.priority,
+        status: "todo",
+        dueDate: new Date(),
+      });
       setTasks([...tasks, res]);
       setNewTask({ title: "", description: "", priority: "medium" });
     } catch (err) {

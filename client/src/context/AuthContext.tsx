@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 interface AuthUser {
@@ -10,7 +10,7 @@ interface AuthUser {
 
 interface AuthContextType {
   user: AuthUser | null;
-  login: (name: string, password: string) => Promise<void>;
+  login: (name: string, password: string) => Promise<AuthUser>;
   register: (
     name: string,
     password: string,
@@ -21,7 +21,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: async () => {},
+  login: async () =>
+    // @ts-ignore: default stub
+    null as unknown as AuthUser,
   register: async () => {},
   logout: () => {},
 });
@@ -29,21 +31,40 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
 
-  const login = async (name: string, password: string) => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUser({
+          id: payload.id,
+          name: payload.name,
+          role: payload.role,
+          token,
+        });
+      } catch {
+        localStorage.removeItem("token");
+      }
+    }
+  }, []);
+
+  const login = async (name: string, password: string): Promise<AuthUser> => {
     const res = await axios.post("http://localhost:3000/api/auth/login", {
       name,
       password,
     });
     const { token, user } = res.data;
     localStorage.setItem("token", token);
-    setUser({ ...user, token });
+    const authUser: AuthUser = { ...user, token };
+    setUser(authUser);
+    return authUser;
   };
 
   const register = async (
     name: string,
     password: string,
     role: "admin" | "user" | "member"
-  ) => {
+  ): Promise<void> => {
     await axios.post("http://localhost:3000/api/auth/register", {
       name,
       password,
