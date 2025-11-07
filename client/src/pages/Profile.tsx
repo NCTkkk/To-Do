@@ -1,67 +1,64 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { User, LogOut } from "lucide-react";
 
-export function Profile() {
-  const { user } = useAuth();
+export const Menu = () => {
+  const { user, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  // nếu chưa login → báo
-  if (!user) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <p className="text-gray-500 text-lg">You need to log in first.</p>
-      </div>
-    );
-  }
+  // đóng menu khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  const [name, setName] = useState(user.name);
-  const [role] = useState(user.role);
-  const [message, setMessage] = useState("");
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    // sau này sẽ gọi API update user info ở đây
-    setMessage("Profile updated successfully!");
-    setTimeout(() => setMessage(""), 2000);
-  };
+  if (!user) return null;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">My Profile</h2>
+    <div className="relative " ref={menuRef}>
+      {/* Avatar icon */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
+      >
+        <span className="font-semibold text-gray-700">
+          {user.name?.charAt(0).toUpperCase() || "U"}
+        </span>
+      </button>
 
-        <form onSubmit={handleSave}>
-          <div className="mb-4">
-            <label className="block mb-1 text-gray-600">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border p-2 w-full rounded"
-            />
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
+          <div className="px-4 py-3 border-b border-gray-100">
+            <p className="font-semibold text-gray-800">{user.name}</p>
+            <p className="text-sm text-gray-500 capitalize">{user.role}</p>
           </div>
-
-          <div className="mb-4">
-            <label className="block mb-1 text-gray-600">Role</label>
-            <input
-              type="text"
-              value={role}
-              disabled
-              className="border p-2 w-full rounded bg-gray-100 text-gray-500"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-          >
-            Save Changes
-          </button>
-
-          {message && (
-            <p className="text-green-500 text-center mt-3">{message}</p>
-          )}
-        </form>
-      </div>
+          <ul className="py-2">
+            <li>
+              <button
+                className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                onClick={() => alert("Trang cá nhân đang làm 😎")}
+              >
+                <User size={16} /> Hồ sơ cá nhân
+              </button>
+            </li>
+            <li>
+              <button
+                className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                onClick={logout}
+              >
+                <LogOut size={16} /> Đăng xuất
+              </button>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
-}
+};

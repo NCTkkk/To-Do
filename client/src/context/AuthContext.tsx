@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           role: payload.role,
           token,
         });
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       } catch {
         localStorage.removeItem("token");
       }
@@ -55,6 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
     const { token, user } = res.data;
     localStorage.setItem("token", token);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     const authUser: AuthUser = { ...user, token };
     setUser(authUser);
     return authUser;

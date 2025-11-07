@@ -15,6 +15,7 @@ interface TaskAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   assignedTo?: string | null;
+  submission?: string | null;
 }
 
 interface TaskCreationAttributes extends Optional<TaskAttributes, "id"> {}
@@ -34,6 +35,7 @@ class Task
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public assignedTo?: string | null;
+  public submission?: string | null;
 }
 
 Task.init(
@@ -74,6 +76,10 @@ Task.init(
     },
     dueDate: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    submission: {
+      type: DataTypes.TEXT,
       allowNull: true,
     },
   },

@@ -10,4 +10,5 @@ export interface Task {
   createdAt: Date;
   updatedAt: Date;
   assignedTo?: string | null;
+  submisstion?: string | null;
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { AdminList } from "./AdminList";
-import { AdminMenu } from "./AdminMenu";
+import { Menu } from "../Profile";
 
 export interface User {
   id: string;
@@ -79,9 +79,9 @@ export const AdminDashboard = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen ml-30 mr-30">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Quản lý người dùng</h1>
-        <AdminMenu />
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-4xl font-bold">Quản lý người dùng</h1>
+        <Menu />
       </div>
       <AdminList
         users={users}

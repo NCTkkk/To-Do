@@ -14,24 +14,15 @@ const createSampleTasks = async () => {
     // Create tasks
     const tasks = await Task.bulkCreate([
       {
-        title: "ngủ",
+        title: "sdjknvdsjv",
         description: "",
         completed: false,
         userId: "05cbf6ae-829b-4421-8cf9-9caa4a4a800a",
         priority: "high",
         status: "in-progress",
-        dueDate: new Date("2026-10-30"),
+        dueDate: new Date("2027-10-30"),
         assignedTo: "591686ed-de0d-4abd-a846-42ca6406de01",
-      },
-      {
-        title: "ăn",
-        description: "",
-        completed: false,
-        userId: "05cbf6ae-829b-4421-8cf9-9caa4a4a800a",
-        priority: "medium",
-        status: "todo",
-        dueDate: new Date("2026-11-05"),
-        assignedTo: "591686ed-de0d-4abd-a846-42ca6406de01",
+        submission: "",
       },
     ]);
 

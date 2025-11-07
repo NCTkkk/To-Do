@@ -8,6 +8,8 @@ import { useAuth, AuthProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
 import { UserDashboard } from "./pages/user/UserDashboard";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
+import { MemberDashboard } from "./pages/member/MemberDashboard";
+import { UserSubmissions } from "./pages/user/UserSubmission";
 import type { JSX } from "react";
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
@@ -46,6 +48,15 @@ export default function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/member/tasks"
+            element={
+              <PrivateRoute>
+                <MemberDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/user/submissions" element={<UserSubmissions />} />
           <Route path="/" element={<RoleRedirect />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

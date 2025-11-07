@@ -21,6 +21,7 @@ export const authMiddleware = (
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayloadCustom;
     (req as any).userId = (decoded as any).id;
     (req as any).userRole = decoded.role;
+    (req as any).user = { id: decoded.id, role: decoded.role };
     next();
   } catch (err: any) {
     console.error("❌ Token verify fail:", err.message);

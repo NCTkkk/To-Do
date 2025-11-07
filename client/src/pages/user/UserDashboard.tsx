@@ -7,6 +7,9 @@ import {
   deleteTask,
 } from "../../api/taskAPI";
 import { useAuth } from "../../context/AuthContext";
+import { getMembers } from "../../api/memberAPI"; // giả định bạn có API này
+import { useNavigate } from "react-router-dom";
+import { Menu } from "../Profile";
 
 export const UserDashboard = () => {
   const { user } = useAuth();
@@ -16,7 +19,12 @@ export const UserDashboard = () => {
     description: "",
     priority: "medium" as "low" | "medium" | "high",
   });
+  const [members, setMembers] = useState<any[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
+  // 📦 Lấy danh sách task của user
   useEffect(() => {
     const fetchTasks = async () => {
       if (!user) return;
@@ -33,6 +41,20 @@ export const UserDashboard = () => {
     fetchTasks();
   }, [user]);
 
+  // 👥 Lấy danh sách member
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const res = await getMembers();
+        setMembers(res);
+      } catch (err) {
+        console.error("Lỗi tải members:", err);
+      }
+    };
+    fetchMembers();
+  }, []);
+
+  // ➕ Thêm task mới
   const handleAddTask = async () => {
     if (!newTask.title.trim()) return alert("Nhập tiêu đề task!");
     try {
@@ -45,50 +67,78 @@ export const UserDashboard = () => {
         status: "todo",
         dueDate: new Date(),
       });
-      setTasks([...tasks, res]);
+      setTasks((prev) => [...prev, res]);
       setNewTask({ title: "", description: "", priority: "medium" });
     } catch (err) {
       console.error("Lỗi thêm task:", err);
     }
   };
 
+  // 🗑️ Xóa task
   const handleDelete = async (id: string) => {
     if (!confirm("Xóa task này?")) return;
     try {
       await deleteTask(id);
-      setTasks(tasks.filter((t) => t.id !== id));
+      setTasks((prev) => prev.filter((t) => t.id !== id));
     } catch (err) {
       console.error("Lỗi xóa task:", err);
     }
   };
 
+  // 🔁 Cập nhật trạng thái task
   const handleToggleStatus = async (task: Task) => {
-    const nextStatus = (
+    const nextStatus: "todo" | "in-progress" | "done" =
       task.status === "todo"
         ? "in-progress"
         : task.status === "in-progress"
         ? "done"
-        : "todo"
-    ) as "todo" | "in-progress" | "done";
+        : "todo";
 
     const updatedTask = { ...task, status: nextStatus, updatedAt: new Date() };
     try {
-      await updateTask(task.id, {
-        status: nextStatus as "todo" | "in-progress" | "done",
-        updatedAt: new Date(),
-      });
-      setTasks(tasks.map((t) => (t.id === task.id ? updatedTask : t)));
+      await updateTask(task.id, updatedTask);
+      setTasks((prev) => prev.map((t) => (t.id === task.id ? updatedTask : t)));
     } catch (err) {
       console.error("Lỗi cập nhật:", err);
     }
   };
 
+  // 🎯 Mở modal giao task
+  const openAssignModal = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setShowModal(true);
+  };
+
+  // ✅ Giao task cho member
+  const assignTask = async (memberId: string) => {
+    if (!selectedTaskId) return;
+
+    try {
+      await updateTask(selectedTaskId, { assignedTo: String(memberId) });
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === selectedTaskId ? { ...t, assignedTo: String(memberId) } : t
+        )
+      );
+      setShowModal(false);
+      setSelectedTaskId(null);
+    } catch (err) {
+      console.error("Lỗi giao task:", err);
+    }
+  };
+
+  console.log("members raw: ", members);
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Quản lý Task (User)</h1>
+    <div className="p-6 bg-gray-50 min-h-screen ml-30 mr-30">
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-2xl font-bold">Quản lý Task (User)</h1>
+
+        <Menu />
+      </div>
 
       {/* Form thêm task */}
-      <div className="mb-6 flex gap-2">
+      <div className="mb-10 flex gap-2 ">
         <input
           type="text"
           value={newTask.title}
@@ -125,6 +175,13 @@ export const UserDashboard = () => {
         >
           Thêm
         </button>
+
+        <button
+          onClick={() => navigate("/user/submissions")}
+          className="ml-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          📑 Xem các bài nộp
+        </button>
       </div>
 
       {/* Danh sách task */}
@@ -138,6 +195,7 @@ export const UserDashboard = () => {
               <th className="border px-4 py-2">Mô tả</th>
               <th className="border px-4 py-2">Mức độ</th>
               <th className="border px-4 py-2">Trạng thái</th>
+              <th className="border px-4 py-2">Giao cho</th>
               <th className="border px-4 py-2">Hành động</th>
             </tr>
           </thead>
@@ -148,12 +206,25 @@ export const UserDashboard = () => {
                 <td className="border px-4 py-2">{t.description}</td>
                 <td className="border px-4 py-2 capitalize">{t.priority}</td>
                 <td className="border px-4 py-2 capitalize">{t.status}</td>
-                <td className="border px-4 py-2 text-center flex gap-2 justify-center">
+                <td className="border px-4 py-2">
+                  {t.assignedTo ? (
+                    members.find((m) => m.id === t.assignedTo)?.id || "Đã giao"
+                  ) : (
+                    <span className="text-gray-400">Chưa giao</span>
+                  )}
+                </td>
+                <td className="border px-4 py-2 flex gap-2 justify-center">
                   <button
                     onClick={() => handleToggleStatus(t)}
                     className="text-green-500 hover:text-green-700"
                   >
                     Cập nhật
+                  </button>
+                  <button
+                    onClick={() => openAssignModal(t.id)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    Giao task
                   </button>
                   <button
                     onClick={() => handleDelete(t.id)}
@@ -166,6 +237,32 @@ export const UserDashboard = () => {
             ))}
           </tbody>
         </table>
+      )}
+
+      {/* Modal chọn member */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 shadow-xl w-96">
+            <h2 className="text-xl font-semibold mb-4">Chọn thành viên</h2>
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {members.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => assignTask(m.id)}
+                  className="w-full text-left border rounded p-2 hover:bg-blue-50"
+                >
+                  {m.name} <span className="text-gray-500">({m.role})</span>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowModal(false)}
+              className="mt-4 bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
