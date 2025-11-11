@@ -9,7 +9,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { getMembers } from "../../api/memberAPI"; // giả định bạn có API này
 import { useNavigate } from "react-router-dom";
-import { Menu } from "../Profile";
+import { Menu } from "../Menu";
 
 export const UserDashboard = () => {
   const { user } = useAuth();

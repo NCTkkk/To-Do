@@ -10,6 +10,8 @@ import { UserDashboard } from "./pages/user/UserDashboard";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { MemberDashboard } from "./pages/member/MemberDashboard";
 import { UserSubmissions } from "./pages/user/UserSubmission";
+import { Register } from "./pages/Register";
+import { Profile } from "./pages/Profile";
 import type { JSX } from "react";
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
@@ -32,6 +34,8 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
           <Route
             path="/admin/users"
             element={

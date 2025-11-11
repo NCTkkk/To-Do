@@ -3,6 +3,23 @@ import UserService from "../services/user.service";
 import bcrypt from "bcrypt";
 
 export class UserController {
+  async profile(req: Request, res: Response) {
+    try {
+      const userId = (req as any).userId;
+      const user = await UserService.findById(userId);
+
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      res.json({
+        id: user.id,
+        name: user.name,
+        role: user.role,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching profile", error });
+    }
+  }
+
   async findALL(req: Request, res: Response) {
     try {
       const users = await UserService.findAll();

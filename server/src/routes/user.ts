@@ -1,11 +1,15 @@
 import { Router } from "express";
 import UserController from "../controllers/user.controller";
-import { authMiddleware } from "../middlewares/auth.middlewares";
 import { authorize } from "../middlewares/role.middleware";
 
 const router = Router();
 
-// Admin: xem & CRUD tất cả user
+router.get(
+  "/profile",
+  authorize("admin", "user", "member"),
+  UserController.profile.bind(UserController)
+);
+
 router.get(
   "/",
   authorize("admin"),

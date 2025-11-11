@@ -1,74 +1,80 @@
-// import { useState } from "react";
-// import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-// export default function Register() {
-//   const { register } = useAuth();
-//   const [name, setName] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [role, setRole] = useState<"admin" | "user">("user");
-//   const [message, setMessage] = useState("");
+export const Register = () => {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("member");
+  const navigate = useNavigate();
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     try {
-//       await register(name, password, role);
-//       setMessage("Đăng ký thành công!");
-//       setName("");
-//       setPassword("");
-//       setRole("user");
-//     } catch (err: any) {
-//       setMessage("Đăng ký thất bại!");
-//       console.error(err);
-//     }
-//   };
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
-//   return (
-//     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-//       <div className="bg-white p-8 rounded-2xl shadow-md w-96">
-//         <h2 className="text-2xl font-bold mb-6 text-center">
-//           Đăng ký tài khoản
-//         </h2>
+  const handleRegister = async (e: any) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${API_URL}/auth/register`, {
+        name,
+        password,
+        role,
+      });
+      alert("✅ Đăng ký thành công!");
+      console.log(res.data);
+    } catch (err) {
+      console.error(err);
+      alert("❌ Lỗi khi đăng ký!");
+    }
+  };
 
-//         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-//           <input
-//             type="text"
-//             placeholder="Tên đăng nhập"
-//             value={name}
-//             onChange={(e) => setName(e.target.value)}
-//             className="border rounded-lg px-3 py-2"
-//             required
-//           />
+  return (
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <form
+        onSubmit={handleRegister}
+        className="bg-white p-6 rounded shadow-md w-80 space-y-3"
+      >
+        <h2 className="text-xl font-semibold text-center mb-3">Đăng ký</h2>
 
-//           <input
-//             type="password"
-//             placeholder="Mật khẩu"
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//             className="border rounded-lg px-3 py-2"
-//             required
-//           />
+        <input
+          className="border p-2 rounded w-full"
+          placeholder="Tên đăng nhập"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-//           <select
-//             value={role}
-//             onChange={(e) => setRole(e.target.value as "admin" | "user")}
-//             className="border rounded-lg px-3 py-2"
-//           >
-//             <option value="user">Người dùng</option>
-//             <option value="admin">Quản trị viên</option>
-//           </select>
+        <input
+          type="password"
+          className="border p-2 rounded w-full"
+          placeholder="Mật khẩu"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-//           <button
-//             type="submit"
-//             className="bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition"
-//           >
-//             Đăng ký
-//           </button>
-//         </form>
+        <select
+          className="border p-2 rounded w-full"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="member">Member</option>
+          <option value="user">User</option>
+        </select>
 
-//         {message && (
-//           <p className="text-center text-sm mt-4 text-gray-600">{message}</p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-3 py-2 rounded w-full hover:bg-blue-700"
+        >
+          Đăng ký
+        </button>
+        <p className="text-center text-sm mt-3">
+          Đã có tài khoản?{" "}
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="text-blue-500 hover:underline"
+          >
+            Đăng nhập ngay
+          </button>
+        </p>
+      </form>
+    </div>
+  );
+};

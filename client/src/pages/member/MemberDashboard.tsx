@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
-import { Menu } from "../Profile";
+import { Menu } from "../Menu";
 
 interface Task {
   id: string;

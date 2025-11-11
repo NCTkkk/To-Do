@@ -58,9 +58,13 @@ export default function Login() {
         </button>
         <p className="text-center text-sm mt-3">
           Chưa có tài khoản?{" "}
-          <a href="/register" className="text-blue-500 hover:underline">
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+            className="text-blue-500 hover:underline"
+          >
             Đăng ký ngay
-          </a>
+          </button>
         </p>
       </form>
     </div>

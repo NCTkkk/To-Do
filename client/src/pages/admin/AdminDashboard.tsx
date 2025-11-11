@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { AdminList } from "./AdminList";
-import { Menu } from "../Profile";
+import { Menu } from "../Menu";
 
 export interface User {
   id: string;
